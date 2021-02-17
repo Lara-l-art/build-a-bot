@@ -14,5 +14,8 @@ module.exports = {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'linebreak-style': 0,
+    "no-param-reassign": 0,
   },
 };
+// to install webpack
+//vue inspect --mode=production > webpack.config.js

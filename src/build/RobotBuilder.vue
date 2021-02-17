@@ -25,9 +25,9 @@
       <div :class="[saleBorderClass, 'top', 'part']">
         <div class="robot-name">
           {{selectedRobot.head.title}}
-          <span v-if="selectedRobot.head.onSale" class="sale">
-            Sale!
-          </span>
+<!--          <span v-if="selectedRobot.head.onSale" class="sale">-->
+<!--            Sale!-->
+<!--          </span>-->
         </div>
         <PartSelector
           :parts="availableParts.heads"
@@ -63,6 +63,8 @@
   </div>
 </template>
 <script>
+// import { mapActions, mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 import PartSelector from '@/build/PartSelector.vue';
 import CollapsibleSection from '@/shared/CollapsibleSection.vue';
 import createdHookMixin from './created-hook-mixin';
@@ -70,7 +72,7 @@ import createdHookMixin from './created-hook-mixin';
 export default {
   name: 'RobotBuilder',
   created() {
-    this.$store.dispatch('getParts');
+    this.getParts();
   },
   beforeRouteLeave(to, from, next) {
     if (this.addedToCart) {
@@ -99,7 +101,7 @@ export default {
   mixins: [createdHookMixin],
   computed: {
     availableParts() {
-      return this.$store.state.parts;
+      return this.$store.state.robots.parts;
     },
     saleBorderClass() {
       return this.selectedRobot.head.onSale ? 'sale-border' : '';
@@ -113,11 +115,14 @@ export default {
     },
   },
   methods: {
+    ...mapActions('robots', ['getParts', 'addRobotToCart']),
+    // ...mapMutations('robots', ['someMutations']),
     addToCart() {
       const robot = this.selectedRobot;
       const cost = robot.head.cost + robot.leftArm.cost
         + robot.rightArm.cost + robot.torso.cost + robot.base.cost;
-      this.$store.dispatch('addRobotToCart', { ...robot, cost });
+      this.addRobotToCart({ ...robot, cost })
+        .then(() => this.$router.push('/cart'));
       this.addedToCart = true;
     },
   },
